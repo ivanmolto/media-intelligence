@@ -7,6 +7,7 @@
 // Operators are case-sensitive (R7): `AND` is an operator, `and` is a term.
 // A term, prefix or phrase with no letter or digit is rejected here (deviation 3):
 // it has no lexeme under either text-search config, so it could never match.
+// A query that contains U+0000 is rejected too (deviation 16).
 
 /** A query the grammar or the limits reject. Maps to HTTP 400 `invalid_query`. */
 export class InvalidQueryError extends Error {
@@ -46,6 +47,11 @@ function requireLetterOrDigit(text: string, source: string): void {
 }
 
 export function tokenize(query: string): Token[] {
+  // Postgres text cannot hold U+0000: as a parameter it is an encoding error, which
+  // would surface as a 500 (deviation 16).
+  if (query.includes("\u0000")) {
+    throw new InvalidQueryError("the query contains a NUL character");
+  }
   const tokens: Token[] = [];
   let i = 0;
   while (i < query.length) {
