@@ -1,0 +1,72 @@
+# docker compose up                 db → init (one-shot) → web on http://localhost:3000
+# docker compose run --rm test      the test suite, against the media_test database
+#
+# No service is given an API key: everything here runs with LLM_MODE=mock and makes
+# no network call. Live runs are done on the host (docs/plan.md §3, phase 3).
+name: media-signal
+
+x-app: &app
+  build: .
+  image: media-signal-app
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: media
+      POSTGRES_PASSWORD: media
+      POSTGRES_DB: media
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U media -d media"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  init:
+    <<: *app
+    command: ["npm", "run", "init"]
+    environment:
+      DATABASE_URL: postgres://media:media@db:5432/media
+      LLM_MODE: mock
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    <<: *app
+    environment:
+      DATABASE_URL: postgres://media:media@db:5432/media
+      LLM_MODE: mock
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  test:
+    <<: *app
+    profiles: ["test"]
+    command: ["npm", "test"]
+    environment:
+      TEST_DATABASE_URL: postgres://media:media@db:5432/media_test
+      LLM_MODE: mock
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

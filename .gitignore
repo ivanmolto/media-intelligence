@@ -1,1 +1,18 @@
 .DS_Store
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# dependencies and build output
+node_modules/
+.next/
+coverage/
+
+# per-machine Claude settings
+.claude/settings.local.json
+
+# generated
+next-env.d.ts
+*.tsbuildinfo

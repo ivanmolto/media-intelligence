@@ -1,0 +1,12 @@
+.git
+.githooks
+.claude
+.DS_Store
+node_modules
+.next
+coverage
+# secrets never enter the image
+.env
+.env.*
+!.env.example
+docs/ai-transcript

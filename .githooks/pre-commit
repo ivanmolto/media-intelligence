@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+# Blocks commits that include secrets, transcripts, changes to frozen plans, or unsafe rendering.
+# Enable once with: git config core.hooksPath .githooks
+#
+# Key patterns live in scripts/secret-patterns.txt: one extended regex per line, no blank
+# lines and no comments. The security-audit and wrap-session skills read the same file.
+# If the file is missing or invalid, the commit is blocked.
+#
+# Transcripts: Ivan commits them with  ALLOW_TRANSCRIPT_COMMIT=1 git commit …
+#
+# Limits:
+# - `git commit --no-verify` skips this hook entirely.
+# - `git commit --amend` is compared with HEAD, so amending the commit that first added a
+#   frozen file counts as a modification and is blocked.
+set -euo pipefail
+
+patterns=scripts/secret-patterns.txt
+# Raw HTML sinks: the React prop, insertAdjacentHTML, document.write(ln), and any assignment
+# to innerHTML/outerHTML — dot or bracket access, plain or compound (=, +=, ||=, &&=, ??=).
+# Comparisons (==, ===, !==) do not match.
+html_prop='(\.|\[[[:space:]]*["'\''`])(inner|outer)HTML(["'\''`][[:space:]]*\])?'
+html_assign='[[:space:]]*(\+|\|\||&&|\?\?)?=([^=]|$)'
+raw_html="dangerouslySetInnerHTML|insertAdjacentHTML|document\.write(ln)?[[:space:]]*\(|$html_prop$html_assign"
+
+fail=0
+block() { echo "pre-commit: BLOCKED — $1"; fail=1; }
+lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
+
+# --no-renames everywhere: a rename is a delete plus an add, so neither half can hide.
+# -z and `read -d ''` keep filenames with spaces intact.
+# The lists go to files first, so a failing `git diff` stops the hook instead of yielding
+# an empty list that passes.
+changed=$(mktemp)
+frozen=$(mktemp)
+trap 'rm -f "$changed" "$frozen"' EXIT
+git diff --cached --name-only -z --no-renames --diff-filter=ACMT >"$changed"
+git diff --cached --name-only -z --no-renames --diff-filter=MDT >"$frozen"
+
+# The pattern file must exist, have no blank line (which would match everything) and compile.
+scan_secrets=1
+if [ ! -s "$patterns" ]; then
+  block "$patterns is missing or empty; secrets cannot be checked"
+  scan_secrets=0
+elif [ -n "$(grep -n '^[[:space:]]*$' "$patterns" || true)" ]; then
+  block "$patterns has a blank line; remove it"
+  scan_secrets=0
+else
+  rc=0
+  grep -E -f "$patterns" </dev/null >/dev/null 2>&1 || rc=$?
+  if [ "$rc" -gt 1 ]; then
+    block "$patterns has an invalid regex"
+    scan_secrets=0
+  fi
+fi
+
+# 1. Paths that must not be added or changed.
+while IFS= read -r -d '' f; do
+  case "$(lower "$f")" in
+    .env.example|*/.env.example) ;;
+    .env|.env.*|*/.env|*/.env.*)
+      block "never commit .env files: $f" ;;
+    docs/ai-transcript/*)
+      [ "${ALLOW_TRANSCRIPT_COMMIT:-}" = 1 ] ||
+        block "transcripts are committed by Ivan (ALLOW_TRANSCRIPT_COMMIT=1 git commit …): $f" ;;
+  esac
+done <"$changed"
+
+# 2. Frozen files may be added once; never modified, renamed or deleted.
+while IFS= read -r -d '' f; do
+  case "$(lower "$f")" in
+    docs/plan.md|docs/intent.md|docs/spec.md|docs/plan/*)
+      block "$f is frozen (no edits, renames or deletions); log the change in docs/deviations.md" ;;
+  esac
+done <"$frozen"
+
+# 3. Content checks, on the lines this commit adds only.
+# Hits are reported as file:line and the matching text is never printed: this output can
+# end up in a session log or an exported transcript.
+# No `grep -q` on a pipe here: under pipefail it turns a match in a large file into a miss.
+check() {  # $1 file, $2 added lines, $3 their line numbers, $4 label, $5... grep pattern args
+  local f=$1 added=$2 nums=$3 label=$4 hits i
+  shift 4
+  # -a: bytes that are not valid text must not turn the line numbers into "Binary file matches".
+  hits=$(grep -anE "$@" <<<"$added" | cut -d: -f1 || true)
+  [ -n "$hits" ] || return 0
+  block "$label in $f (text not shown):"
+  for i in $(head -3 <<<"$hits"); do
+    echo "  $f:$(sed -n "${i}p" <<<"$nums")"
+  done
+}
+while IFS= read -r -d '' f; do
+  lf=$(lower "$f")
+  case "$lf" in
+    *.png|*.jpg|*.jpeg|*.gif|*.webp|*.ico|*.pdf|*.woff|*.woff2|*.lock) continue ;;
+    pnpm-lock.yaml|*/pnpm-lock.yaml|package-lock.json|*/package-lock.json) continue ;;
+  esac
+  # --literal-pathspecs: a path such as app/[id]/page.tsx must not act as a glob.
+  # Each added line is numbered with its line in the new file.
+  # NUL bytes are dropped first: awk cuts a line at the first NUL, which would hide the rest
+  # of the line and all of a UTF-16 file. LC_ALL=C lets tr pass bytes that are not UTF-8.
+  numbered=$(git --literal-pathspecs diff --cached -U0 --no-renames --no-ext-diff --no-color --text -- "$f" |
+             LC_ALL=C tr -d '\000' |
+             awk '/^@@/ { split($3, a, ","); n = substr(a[1], 2) + 0; body = 1; next }
+                  body && /^\+/ { print n "\t" substr($0, 2); n++ }')
+  [ -z "$numbered" ] && continue
+  nums=$(cut -f1 <<<"$numbered")
+  added=$(cut -f2- <<<"$numbered")
+
+  # Raw HTML rendering matters in application source; docs, skills and tests may name it.
+  case "$lf" in
+    tests/*|scripts/*) ;;
+    *.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.mdx)
+      check "$f" "$added" "$nums" 'raw HTML rendering' -e "$raw_html" ;;
+  esac
+  if [ "$scan_secrets" = 1 ]; then
+    check "$f" "$added" "$nums" 'secret' -f "$patterns"
+  fi
+done <"$changed"
+
+exit $fail
