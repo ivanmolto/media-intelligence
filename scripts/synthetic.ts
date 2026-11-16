@@ -269,8 +269,11 @@ async function main(): Promise<void> {
       );
       enrichments += await insertEnrichments(client, key, batch);
     }
-    await client.query("VACUUM (ANALYZE) articles");
-    await client.query("VACUUM (ANALYZE) article_enrichments");
+    // PARALLEL 0: a parallel vacuum keeps its dead-tuple store in dynamic shared
+    // memory, sized by maintenance_work_mem (64MB), and the compose `db` container
+    // has Docker's default 64MB /dev/shm, so the allocation fails there.
+    await client.query("VACUUM (ANALYZE, PARALLEL 0) articles");
+    await client.query("VACUUM (ANALYZE, PARALLEL 0) article_enrichments");
     const total = await client.query<{ count: string }>(
       "SELECT count(*) AS count FROM articles",
     );
