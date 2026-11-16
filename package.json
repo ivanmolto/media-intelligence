@@ -9,6 +9,7 @@
     "migrate": "tsx scripts/migrate.ts",
     "seed": "tsx scripts/seed.ts",
     "init": "npm run migrate && npm run seed",
+    "search:debug": "tsx scripts/search-debug.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write \"{app,lib,components,scripts,tests}/**/*.{ts,tsx}\" \"*.{ts,mjs}\"",
