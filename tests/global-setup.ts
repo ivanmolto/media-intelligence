@@ -1,6 +1,8 @@
 // Vitest global setup for the `integration` project only (see vitest.config.ts).
 // Unit tests do not run this and pass with the database stopped.
 import { Client } from "pg";
+import { migrate } from "../scripts/migrate";
+import { loadSampleArticles, seed } from "../scripts/seed";
 import { TEST_DATABASE, testDatabaseUrl } from "./db-url";
 
 export default async function setup(): Promise<void> {
@@ -32,6 +34,15 @@ export default async function setup(): Promise<void> {
     await client.end();
   }
 
-  // Phase 1: run the migrations and the seed against `url` here, and truncate
-  // between test files that write (plan §3, "Test database").
+  // Migrations and seed, both idempotent, so the suite can run again and again on
+  // the same media_test. Test files that write enrichment rows truncate that table
+  // when they finish (plan §3, "Test database"); nothing writes `articles` but the seed.
+  const db = new Client({ connectionString: url });
+  await db.connect();
+  try {
+    await migrate(db);
+    await seed(db, loadSampleArticles());
+  } finally {
+    await db.end();
+  }
 }
