@@ -1,0 +1,301 @@
+{
+  "provenance": "live",
+  "model": "anthropic/claude-haiku-5.5",
+  "run_date": "2026-11-16",
+  "note": "Recorded output of the live run named above, exported by `npm run eval:export -- --mock-fixtures`; token counts are the provider-reported ones (summed when a row took a retry). `key` is the hash of the provider input (lib/enrich/mock.ts).",
+  "fixtures": [
+    {
+      "external_id": 1,
+      "key": "d24aeac7049e3abca745a4e3ce7c5de311f97173f233f95c06440141b2c9d0cb",
+      "output": {
+        "summary": "Crude oil prices rose sharply on Monday as escalating Middle East tensions raised concerns about supply disruptions. Brent crude climbed 3.2% to $87.40 per barrel, its highest level in three months, and analysts warned prices could exceed $90 by year-end if instability persists.",
+        "sentiment": "negative",
+        "tags": [
+          "energy",
+          "geopolitics",
+          "markets"
+        ]
+      },
+      "input_tokens": 838,
+      "output_tokens": 133
+    },
+    {
+      "external_id": 2,
+      "key": "9aecbddeb059b0a36429e890ca06de036bc1ece1eb25083c9b86ed7abedb086d",
+      "output": {
+        "summary": "Several major technology companies reported better-than-expected second-quarter earnings, driven by strong demand for AI infrastructure and cloud services, with enterprise AI spending up 45% year-over-year. Some analysts, however, questioned how sustainable current AI capital spending is and when many AI initiatives will become profitable.",
+        "sentiment": "positive",
+        "tags": [
+          "markets",
+          "ai",
+          "business"
+        ]
+      },
+      "input_tokens": 843,
+      "output_tokens": 135
+    },
+    {
+      "external_id": 3,
+      "key": "bb2f8bd76f96858453172bd149580d6380fc4071ee9114b47c7835788fb2db21",
+      "output": {
+        "summary": "The EU's AI Act transparency requirements took effect today, requiring companies to disclose AI-generated content and document their training data sources. Industry groups criticised the timeline as aggressive, while consumer advocates welcomed the move, and non-compliant companies face fines of up to 6% of global revenue.",
+        "sentiment": "neutral",
+        "tags": [
+          "regulation",
+          "ai"
+        ]
+      },
+      "input_tokens": 824,
+      "output_tokens": 129
+    },
+    {
+      "external_id": 4,
+      "key": "51a3b4a682d89130b2287c0f8f7793624a3ba030188b405dcfa0dc73c06e2c6c",
+      "output": {
+        "summary": "The central bank kept its benchmark interest rate unchanged at 4.25% at its July meeting, citing mixed economic signals such as inflation easing to 2.8% alongside persistent wage growth and geopolitical risks. Governor Martinez said rate cuts remain possible in September if inflation keeps falling.",
+        "sentiment": "neutral",
+        "tags": [
+          "economy",
+          "markets"
+        ]
+      },
+      "input_tokens": 848,
+      "output_tokens": 133
+    },
+    {
+      "external_id": 5,
+      "key": "d56e7fdbda79e26ad402fe60716acb1bf2f8244da166d1a000bbbc1d54bac723",
+      "output": {
+        "summary": "Global renewable energy investment reached $380 billion in the first half of 2026, surpassing the previous full-year record set in 2025. The International Energy Agency attributed the surge to falling technology costs and supportive policies in Asia and Europe.",
+        "sentiment": "positive",
+        "tags": [
+          "energy",
+          "climate",
+          "economy"
+        ]
+      },
+      "input_tokens": 840,
+      "output_tokens": 111
+    },
+    {
+      "external_id": 6,
+      "key": "e19f5159cff926a4d99f604ba5bc075e76936c30d86e43e3a009d31f010c0a6c",
+      "output": {
+        "summary": "A leading financial services firm disclosed a data breach affecting about 2.3 million customer records, including names, email addresses, and encrypted password hashes. The company said no financial data or social security numbers were exposed, and researchers noted the breach exploited a known vulnerability in an unpatched third-party library.",
+        "sentiment": "negative",
+        "tags": [
+          "cybersecurity",
+          "business"
+        ]
+      },
+      "input_tokens": 819,
+      "output_tokens": 129
+    },
+    {
+      "external_id": 7,
+      "key": "7f6f1e34a1f387f2375d8ea794e2e8d99760636765c179c2d00caf5396de9bcc",
+      "output": {
+        "summary": "Several automakers, mainly European manufacturers, have announced production slowdowns due to shortages of semiconductors used in advanced driver-assistance systems. The disruption is expected to cut third-quarter output by an estimated 150,000 vehicles, as specialised automotive-grade processors remain constrained by limited foundry capacity.",
+        "sentiment": "negative",
+        "tags": [
+          "business",
+          "technology",
+          "economy"
+        ]
+      },
+      "input_tokens": 849,
+      "output_tokens": 140
+    },
+    {
+      "external_id": 8,
+      "key": "ff04710e14f2038d1e8bad20f82f1d5739fb0e1816826bb24c4979bf0963ff0e",
+      "output": {
+        "summary": "Property prices in Dubai rose 15% in the first half of 2026 compared with the same period last year. Market experts attributed the increase to higher demand from international investors, an improved regulatory environment and new infrastructure projects.",
+        "sentiment": "positive",
+        "tags": [
+          "markets",
+          "economy"
+        ]
+      },
+      "input_tokens": 920,
+      "output_tokens": 101
+    },
+    {
+      "external_id": 9,
+      "key": "5a07449a2e152d78a32dcaed38593d688a6c2583bbf37888bc8db63cf6d7e665",
+      "output": {
+        "summary": "Several Chinese technology companies have recently announced increased investment in overseas markets. An industry report says overseas revenue share for Chinese tech firms exceeded 35% in the first half of 2026, up 8 percentage points year on year, which experts link to growing competitiveness in AI and cloud computing.",
+        "sentiment": "positive",
+        "tags": [
+          "business",
+          "technology",
+          "ai"
+        ]
+      },
+      "input_tokens": 816,
+      "output_tokens": 129
+    },
+    {
+      "external_id": 10,
+      "key": "016bf81586a28f0db59104e4efba8d80d2994ef07b4d26d1bf085202dc91cbab",
+      "output": {
+        "summary": "MediAssist AI, a diagnostic imaging startup, closed a $200 million Series C round led by Sequoia Capital. Its AI platform, which helps radiologists detect early-stage cancers, is deployed in 340 hospitals across 12 countries, and the funds will expand it into cardiology and neurology.",
+        "sentiment": "positive",
+        "tags": [
+          "health",
+          "ai",
+          "business"
+        ]
+      },
+      "input_tokens": 853,
+      "output_tokens": 134
+    },
+    {
+      "external_id": 11,
+      "key": "3b701cfa96957e4174d74dde9a9d8b7e362a0343f4d39bc9f5121799e953d3b3",
+      "output": {
+        "summary": "Delegates at a climate summit in Geneva reached a historic agreement on international carbon credit trading standards, establishing uniform verification requirements and preventing double-counting of emission reductions. Environmental groups gave cautious support, saying implementation details will determine whether it drives real decarbonisation or enables greenwashing.",
+        "sentiment": "positive",
+        "tags": [
+          "climate",
+          "regulation",
+          "markets"
+        ]
+      },
+      "input_tokens": 844,
+      "output_tokens": 138
+    },
+    {
+      "external_id": 12,
+      "key": "862997f7ed6b93b9e7b109c4b7a9738a6ab7036aa0923063fa1796ec50e030b4",
+      "output": {
+        "summary": "One of Europe's largest airlines reported a 12% rise in summer bookings compared with 2025 even as average fares rose 8%, which it attributed to strong leisure demand and a shift to premium economy. It warned that higher jet fuel costs could squeeze margins in the second half of the year and that further fare increases may be needed.",
+        "sentiment": "mixed",
+        "tags": [
+          "business",
+          "transport",
+          "economy"
+        ]
+      },
+      "input_tokens": 838,
+      "output_tokens": 138
+    },
+    {
+      "external_id": 13,
+      "key": "a825a2c85766d8133d5e3ac225fd8c817e3982735fb489aa908a08345b792496",
+      "output": {
+        "summary": "Two major pharmaceutical companies have announced a $68 billion merger that would create the world's third-largest drug maker by revenue, with portfolios spanning oncology, immunology, and rare diseases. Regulatory approval is expected in 12 to 18 months, though US and EU antitrust authorities are likely to require divestitures in overlapping therapeutic areas.",
+        "sentiment": "neutral",
+        "tags": [
+          "business",
+          "health",
+          "regulation"
+        ]
+      },
+      "input_tokens": 844,
+      "output_tokens": 152
+    },
+    {
+      "external_id": 14,
+      "key": "b200cda17cf3291ac1970dcd33efdfb875e94849712083fcd181d8f24dbbe4b7",
+      "output": {
+        "summary": "A CyberWatch International report finds ransomware attacks rose 40% in the first half of 2026 compared with the same period last year, with critical infrastructure, healthcare, and financial services the most targeted sectors. It recommends zero-trust architectures, offline backups, and regular penetration testing.",
+        "sentiment": "negative",
+        "tags": [
+          "cybersecurity",
+          "health",
+          "economy"
+        ]
+      },
+      "input_tokens": 841,
+      "output_tokens": 131
+    },
+    {
+      "external_id": 15,
+      "key": "36b389af05fcd0af375f4164ebc9cfd5f9e35d19830de36252ccfe3e1932c708",
+      "output": {
+        "summary": "A professional basketball league has confirmed expansion franchises in Mexico City, London, Vancouver, and Mumbai, starting play in the 2028-29 season. The article describes it as the league's most ambitious international expansion, with each franchise valued at a record $3.5 billion.",
+        "sentiment": "positive",
+        "tags": [
+          "sports",
+          "business",
+          "markets"
+        ]
+      },
+      "input_tokens": 827,
+      "output_tokens": 122
+    },
+    {
+      "external_id": 16,
+      "key": "ef62477281c0181b99c5ff678f15e8f74626f08d22985f05b74e163d9988b639",
+      "output": {
+        "summary": "Norway became the first country where electric vehicle sales exceeded combustion engine vehicles for a full calendar quarter, with EVs making up 62% of new car registrations in Q2 2026, up from 54% a year earlier. The article attributes the milestone to incentives such as tax exemptions, free municipal parking, and extensive charging infrastructure.",
+        "sentiment": "positive",
+        "tags": [
+          "energy",
+          "climate",
+          "transport"
+        ]
+      },
+      "input_tokens": 847,
+      "output_tokens": 147
+    },
+    {
+      "external_id": 17,
+      "key": "31f7e6d564a2868ad30e861b3e377b3316d0c405d6cae360fcace0edd5c60f3a",
+      "output": {
+        "summary": "Markets closed mixed on Friday, with the S&P 500 up 0.3% and the Nasdaq down 0.2% on below-average trading volume ahead of a long weekend. Bond yields rose slightly on inflation expectations.",
+        "sentiment": "neutral",
+        "tags": [
+          "markets",
+          "economy"
+        ]
+      },
+      "input_tokens": 769,
+      "output_tokens": 108
+    },
+    {
+      "external_id": 18,
+      "key": "942d700b6e2aa41404df9cdbd279220e500d70db06feb46a35455ea7725683b3",
+      "output": {
+        "summary": "A class-action lawsuit filed in federal court accuses a major food delivery platform of misclassifying its 140,000 drivers as independent contractors instead of employees, seeking back pay, benefits and overtime. The company says its model offers flexibility drivers value and it will vigorously defend its position.",
+        "sentiment": "neutral",
+        "tags": [
+          "regulation",
+          "business",
+          "economy"
+        ]
+      },
+      "input_tokens": 882,
+      "output_tokens": 129
+    },
+    {
+      "external_id": 19,
+      "key": "30d0e8ed26c917d3ae9fee5c844771af6fd1b7a2129c5e30c98633e428bfd7dd",
+      "output": {
+        "summary": "A private space company completed its first commercial orbital flight, carrying four paying passengers on a three-day trip around Earth. The company plans monthly flights by 2027 and ticket prices below $10 million within three years.",
+        "sentiment": "positive",
+        "tags": [
+          "technology",
+          "business"
+        ]
+      },
+      "input_tokens": 830,
+      "output_tokens": 96
+    },
+    {
+      "external_id": 20,
+      "key": "15992bbba2e104eb8de1a234a706e18c493db36e59bf6b3cda839c7a1ff4ba1d",
+      "output": {
+        "summary": "International wheat futures fell 5.4% this week after improved harvest forecasts from major producers. The USDA raised its global production estimate by 12 million tonnes, citing favourable weather in the Black Sea region and Australia.",
+        "sentiment": "positive",
+        "tags": [
+          "markets",
+          "economy"
+        ]
+      },
+      "input_tokens": 828,
+      "output_tokens": 102
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "run_key": {
+    "requestedModel": "anthropic/claude-sonnet-5.5",
+    "promptVersion": "v1",
+    "taxonomyVersion": "v1"
+  },
+  "exported_at": "2026-11-16T03:33:15.496Z",
+  "rows": [
+    {
+      "external_id": 1,
+      "status": "done",
+      "summary": "Crude oil prices rose sharply on Monday, with Brent climbing 3.2% to $87.40 per barrel, its highest in three months, as Middle East tensions raised supply disruption concerns. Analysts warned prices could exceed $90 by year-end, affecting inflation and central bank policy worldwide.",
+      "sentiment": "negative",
+      "tags": [
+        "energy",
+        "geopolitics",
+        "markets"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 838,
+      "output_tokens": 139,
+      "latency_ms": 2518,
+      "cost_usd": "0.003066",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:43.294Z"
+    },
+    {
+      "external_id": 2,
+      "status": "done",
+      "summary": "Several major tech companies posted better-than-expected Q2 earnings on strong demand for AI infrastructure and cloud services, with enterprise AI spending up 45% year-over-year. Some analysts worry about the sustainability of AI capital spending and how long many AI initiatives will take to become profitable.",
+      "sentiment": "mixed",
+      "tags": [
+        "business",
+        "ai",
+        "markets"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 843,
+      "output_tokens": 131,
+      "latency_ms": 2411,
+      "cost_usd": "0.002996",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:43.209Z"
+    },
+    {
+      "external_id": 3,
+      "status": "done",
+      "summary": "The EU's AI Act transparency requirements have taken effect, requiring companies to disclose AI-generated content and document their training data sources, with fines of up to 6% of global revenue for non-compliance. Industry groups criticised the timeline as aggressive, while consumer advocacy organisations welcomed the move as overdue.",
+      "sentiment": "mixed",
+      "tags": [
+        "regulation",
+        "ai",
+        "business"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 824,
+      "output_tokens": 138,
+      "latency_ms": 2493,
+      "cost_usd": "0.003028",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:43.283Z"
+    },
+    {
+      "external_id": 4,
+      "status": "done",
+      "summary": "The central bank kept its benchmark interest rate at 4.25% at its July meeting, citing mixed economic signals, with inflation easing to 2.8% but wage growth and geopolitical risks persisting. Governor Martinez said the bank remains data-dependent and that rate cuts are possible in September if inflation keeps falling.",
+      "sentiment": "mixed",
+      "tags": [
+        "economy",
+        "markets"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 848,
+      "output_tokens": 138,
+      "latency_ms": 1909,
+      "cost_usd": "0.003076",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:45.151Z"
+    },
+    {
+      "external_id": 5,
+      "status": "done",
+      "summary": "Global renewable energy investment reached $380 billion in the first half of 2026, surpassing the previous full-year record from 2025. Solar and wind made up 78% of new capacity, battery storage investment tripled, and the IEA credited falling costs and supportive policies in Asia and Europe.",
+      "sentiment": "positive",
+      "tags": [
+        "energy",
+        "climate",
+        "markets"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 840,
+      "output_tokens": 127,
+      "latency_ms": 1835,
+      "cost_usd": "0.002950",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:45.155Z"
+    },
+    {
+      "external_id": 6,
+      "status": "done",
+      "summary": "A leading financial services firm disclosed a data breach affecting about 2.3 million customer records, exposing names, email addresses and encrypted password hashes. The company said no financial data or social security numbers were exposed, and researchers said the breach exploited a known vulnerability in an unpatched third-party library.",
+      "sentiment": "negative",
+      "tags": [
+        "cybersecurity",
+        "business"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 819,
+      "output_tokens": 129,
+      "latency_ms": 2039,
+      "cost_usd": "0.002928",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:45.361Z"
+    },
+    {
+      "external_id": 7,
+      "status": "done",
+      "summary": "Several automakers, mainly European ones, have announced production slowdowns because of semiconductor shortages affecting advanced driver-assistance systems, with Q3 output expected to fall by about 150,000 vehicles. Analysts say the broader chip shortage has eased but specialised automotive-grade processors remain constrained by limited foundry capacity.",
+      "sentiment": "negative",
+      "tags": [
+        "business",
+        "transport",
+        "technology"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 849,
+      "output_tokens": 145,
+      "latency_ms": 1706,
+      "cost_usd": "0.003148",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:46.890Z"
+    },
+    {
+      "external_id": 8,
+      "status": "done",
+      "summary": "Dubai property prices rose 15% in the first half of 2026 compared with the same period last year. Market experts attributed the increase to higher demand from international investors and an improved regulatory environment, with new infrastructure projects also boosting the emirate's appeal as an investment destination.",
+      "sentiment": "positive",
+      "tags": [
+        "markets",
+        "economy",
+        "business"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 920,
+      "output_tokens": 120,
+      "latency_ms": 1804,
+      "cost_usd": "0.003040",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:46.978Z"
+    },
+    {
+      "external_id": 9,
+      "status": "done",
+      "summary": "Several Chinese tech companies have announced larger investments in overseas markets. An industry report says their overseas revenue share exceeded 35% in the first half of 2026, up 8 percentage points year on year, which experts link to growing competitiveness in AI and cloud computing.",
+      "sentiment": "positive",
+      "tags": [
+        "business",
+        "technology",
+        "ai"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 816,
+      "output_tokens": 119,
+      "latency_ms": 1572,
+      "cost_usd": "0.002822",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:46.960Z"
+    },
+    {
+      "external_id": 10,
+      "status": "done",
+      "summary": "MediAssist AI, a healthcare startup focused on diagnostic imaging, closed a $200 million Series C round led by Sequoia Capital. Its platform, which helps radiologists detect early-stage cancers and is used in 340 hospitals across 12 countries, will expand into cardiology and neurology with the funds.",
+      "sentiment": "positive",
+      "tags": [
+        "ai",
+        "health",
+        "business"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 853,
+      "output_tokens": 136,
+      "latency_ms": 1715,
+      "cost_usd": "0.003066",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:48.638Z"
+    },
+    {
+      "external_id": 11,
+      "status": "done",
+      "summary": "Delegates at a climate summit in Geneva agreed on international carbon credit trading standards, with uniform verification requirements and safeguards against double-counting of emission reductions. Environmental groups gave cautious support, saying implementation details will decide whether it drives real decarbonisation or enables greenwashing.",
+      "sentiment": "mixed",
+      "tags": [
+        "climate",
+        "regulation",
+        "markets"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 844,
+      "output_tokens": 134,
+      "latency_ms": 1972,
+      "cost_usd": "0.003028",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:48.951Z"
+    },
+    {
+      "external_id": 12,
+      "status": "done",
+      "summary": "One of Europe's largest airlines reported a 12% rise in summer bookings versus 2025 despite an 8% increase in average fares, citing strong leisure demand and a shift to premium economy. It warned that rising jet fuel costs could squeeze margins in the second half and that further fare adjustments may be needed.",
+      "sentiment": "mixed",
+      "tags": [
+        "transport",
+        "business",
+        "energy"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 838,
+      "output_tokens": 134,
+      "latency_ms": 1628,
+      "cost_usd": "0.003016",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:48.633Z"
+    },
+    {
+      "external_id": 13,
+      "status": "done",
+      "summary": "Two major pharmaceutical companies announced a $68 billion merger to form the world's third-largest drug maker by revenue, with a portfolio spanning oncology, immunology and rare diseases. Regulatory approval is expected in 12 to 18 months, though US and EU antitrust authorities are likely to require divestitures in overlapping areas.",
+      "sentiment": "neutral",
+      "tags": [
+        "business",
+        "health",
+        "regulation"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 844,
+      "output_tokens": 145,
+      "latency_ms": 1845,
+      "cost_usd": "0.003138",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:50.508Z"
+    },
+    {
+      "external_id": 14,
+      "status": "done",
+      "summary": "A CyberWatch International report finds ransomware attacks rose 40% in the first half of 2026 versus the same period last year, with critical infrastructure, healthcare and financial services the most targeted sectors. It recommends zero-trust architectures, offline backups and regular penetration testing.",
+      "sentiment": "negative",
+      "tags": [
+        "cybersecurity",
+        "technology",
+        "business"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 841,
+      "output_tokens": 128,
+      "latency_ms": 1703,
+      "cost_usd": "0.002962",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:50.372Z"
+    },
+    {
+      "external_id": 15,
+      "status": "done",
+      "summary": "A professional basketball league confirmed expansion franchises in Mexico City, London, Vancouver, and Mumbai, starting in the 2028-29 season, each with a record $3.5 billion valuation. The article calls it the league's most ambitious international expansion, with broadcast partnerships already secured for European and Asian markets.",
+      "sentiment": "positive",
+      "tags": [
+        "sports",
+        "business"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 827,
+      "output_tokens": 134,
+      "latency_ms": 1622,
+      "cost_usd": "0.002994",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:50.606Z"
+    },
+    {
+      "external_id": 16,
+      "status": "done",
+      "summary": "Norway became the first country where electric vehicle sales exceeded combustion engine sales for a full calendar quarter, with EVs making up 62% of new car registrations in Q2 2026, up from 54% a year earlier. The article credits tax exemptions, free municipal parking and extensive charging infrastructure.",
+      "sentiment": "positive",
+      "tags": [
+        "transport",
+        "climate",
+        "regulation"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 847,
+      "output_tokens": 134,
+      "latency_ms": 1711,
+      "cost_usd": "0.003034",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:52.110Z"
+    },
+    {
+      "external_id": 17,
+      "status": "done",
+      "summary": "US markets closed mixed on Friday, with the S&P 500 up 0.3% and the Nasdaq down 0.2% on below-average volume ahead of a long weekend. Bond yields rose slightly on inflation expectations.",
+      "sentiment": "mixed",
+      "tags": [
+        "markets",
+        "economy"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 769,
+      "output_tokens": 106,
+      "latency_ms": 1765,
+      "cost_usd": "0.002598",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:52.304Z"
+    },
+    {
+      "external_id": 18,
+      "status": "done",
+      "summary": "A class-action lawsuit in federal court alleges a major food delivery platform misclassifies its 140,000 drivers as independent contractors and seeks back pay, benefits and overtime. Legal experts say the case could have wide implications for the gig economy, while the company says it will vigorously defend its flexible model.",
+      "sentiment": "neutral",
+      "tags": [
+        "regulation",
+        "business",
+        "economy"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Azure",
+      "input_tokens": 882,
+      "output_tokens": 133,
+      "latency_ms": 1714,
+      "cost_usd": "0.003094",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:52.335Z"
+    },
+    {
+      "external_id": 19,
+      "status": "done",
+      "summary": "A private space company completed its first commercial orbital flight, carrying four paying passengers on a three-day trip around Earth at $28 million per ticket. It plans monthly flights by 2027 and ticket prices under $10 million within three years as reusable launch costs fall.",
+      "sentiment": "positive",
+      "tags": [
+        "business",
+        "technology",
+        "transport"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 830,
+      "output_tokens": 117,
+      "latency_ms": 1310,
+      "cost_usd": "0.002830",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:53.455Z"
+    },
+    {
+      "external_id": 20,
+      "status": "done",
+      "summary": "International wheat futures fell 5.4% this week after the USDA raised its global production estimate by 12 million tonnes, citing favourable weather in the Black Sea region and Australia. The drop offers some relief to food-importing nations that have faced elevated costs since 2024.",
+      "sentiment": "positive",
+      "tags": [
+        "markets",
+        "economy",
+        "climate"
+      ],
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "Google",
+      "input_tokens": 828,
+      "output_tokens": 120,
+      "latency_ms": 1359,
+      "cost_usd": "0.002856",
+      "attempts": 1,
+      "error": null,
+      "updated_at": "2026-11-16T03:32:53.687Z"
+    }
+  ]
+}
