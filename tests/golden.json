@@ -1,105 +1,105 @@
 {
-  "note": "Hand-labelled by Ivan before any live model output existed, so the labels are not anchored on a model. `sentiment` is one of positive | negative | neutral | mixed: the overall tone toward the main subject, `mixed` only when both sides carry weight (intent). `acceptable_tags` lists every taxonomy id (lib/enrich/taxonomy.ts) that would be a correct tag for the article; a model output is tag-valid when all of its tags are in this list. Read by scripts/score.ts, which refuses to score while any label is empty.",
+  "note": "`sentiment` is one of positive | negative | neutral | mixed: the overall tone toward the main subject, `mixed` only when both sides carry weight (intent). `acceptable_tags` lists every taxonomy id (lib/enrich/taxonomy.ts) that would be a correct tag for the article; a model output is tag-valid when all of its tags are in this list. Read by scripts/score.ts, which refuses to score while any label is empty.",
   "labels": [
     {
       "external_id": 1,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "negative",
+      "acceptable_tags": ["energy", "markets", "geopolitics", "economy"]
     },
     {
       "external_id": 2,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["technology", "ai", "business", "markets"]
     },
     {
       "external_id": 3,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "mixed",
+      "acceptable_tags": ["regulation", "ai", "technology"]
     },
     {
       "external_id": 4,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "neutral",
+      "acceptable_tags": ["economy", "markets"]
     },
     {
       "external_id": 5,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["energy", "climate", "economy", "business"]
     },
     {
       "external_id": 6,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "negative",
+      "acceptable_tags": ["cybersecurity", "technology", "business"]
     },
     {
       "external_id": 7,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "negative",
+      "acceptable_tags": ["transport", "business", "technology", "economy"]
     },
     {
       "external_id": 8,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["economy", "markets", "business"]
     },
     {
       "external_id": 9,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["technology", "business", "ai", "economy"]
     },
     {
       "external_id": 10,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["health", "ai", "technology", "business"]
     },
     {
       "external_id": 11,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["climate", "regulation", "geopolitics", "markets"]
     },
     {
       "external_id": 12,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["transport", "business"]
     },
     {
       "external_id": 13,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "neutral",
+      "acceptable_tags": ["health", "business", "regulation", "markets"]
     },
     {
       "external_id": 14,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "negative",
+      "acceptable_tags": ["cybersecurity", "technology"]
     },
     {
       "external_id": 15,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["sports", "business"]
     },
     {
       "external_id": 16,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["transport", "energy", "climate", "technology"]
     },
     {
       "external_id": 17,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "neutral",
+      "acceptable_tags": ["markets", "economy"]
     },
     {
       "external_id": 18,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "negative",
+      "acceptable_tags": ["regulation", "business", "economy", "technology"]
     },
     {
       "external_id": 19,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["technology", "business", "transport", "other"]
     },
     {
       "external_id": 20,
-      "sentiment": null,
-      "acceptable_tags": []
+      "sentiment": "positive",
+      "acceptable_tags": ["markets", "economy", "other"]
     }
   ]
 }
