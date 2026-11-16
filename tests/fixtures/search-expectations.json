@@ -1,0 +1,193 @@
+{
+  "about": [
+    "Single source of search expectations. Read by the Vitest search suite and by the search-check skill.",
+    "source: 'spec' = docs/spec.md §2 fixed tests; 'deviation-N' = a spec row corrected by docs/deviations.md row N; 'extra' = implied by the grammar, limits or plan phase 2.",
+    "status: 'fixed' = asserted; if actual differs, the code is wrong. 'provisional' = depends on Postgres behaviour not yet run; executed and reported, not asserted, until the phase 2 spike confirms it and the status is changed to 'fixed'.",
+    "expect.ids = external_id values in ascending order, with expect.warnings matched exactly.",
+    "expect.error = the error code (all map to HTTP 400).",
+    "expect.notError = a code that must not be returned; any result or any other error passes.",
+    "sqlMustNotContain = substrings that must not appear in the SQL text of either compiled fragment (they belong in the parameter array)."
+  ],
+  "cases": [
+    {
+      "id": "spec-oil-prices",
+      "source": "spec",
+      "status": "fixed",
+      "query": "\"oil prices\" AND (geopolitical OR \"supply chain\")",
+      "expect": { "ids": [1], "warnings": [] }
+    },
+    {
+      "id": "spec-renewable-not",
+      "source": "spec",
+      "status": "fixed",
+      "query": "renewable AND NOT (nuclear OR coal)",
+      "expect": { "ids": [5], "warnings": [] }
+    },
+    {
+      "id": "spec-ai-healthcare-not-startup",
+      "source": "spec",
+      "status": "fixed",
+      "query": "AI AND (\"healthcare\" OR \"diagnostic\") AND NOT startup*",
+      "expect": { "ids": [], "warnings": [] }
+    },
+    {
+      "id": "spec-lowercase-and-adjacency",
+      "source": "spec",
+      "status": "fixed",
+      "query": "AI and healthcare",
+      "expect": { "ids": [10], "warnings": ["and"] }
+    },
+    {
+      "id": "spec-oil-and-gas",
+      "source": "spec",
+      "status": "fixed",
+      "query": "oil and gas",
+      "expect": { "ids": [], "warnings": ["and"] }
+    },
+    {
+      "id": "spec-bare-and",
+      "source": "deviation-3",
+      "status": "fixed",
+      "query": "and",
+      "expect": { "ids": [], "warnings": ["and"] }
+    },
+    {
+      "id": "spec-unbalanced-bracket",
+      "source": "spec",
+      "status": "fixed",
+      "query": "(AI OR energy",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "spec-bare-not",
+      "source": "spec",
+      "status": "fixed",
+      "query": "NOT AI",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "spec-quote-operator-chars",
+      "source": "spec",
+      "status": "fixed",
+      "query": "a'b:c&d*",
+      "expect": { "notError": "internal" },
+      "sqlMustNotContain": ["a'b"]
+    },
+    {
+      "id": "extra-prefix",
+      "source": "extra",
+      "status": "fixed",
+      "query": "renew*",
+      "expect": { "ids": [5], "warnings": [] }
+    },
+    {
+      "id": "extra-stop-word-prefix",
+      "source": "extra",
+      "status": "fixed",
+      "query": "the*",
+      "expect": { "ids": [], "warnings": ["the*"] }
+    },
+    {
+      "id": "extra-double-operator",
+      "source": "extra",
+      "status": "fixed",
+      "query": "AI OR OR energy",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "extra-or-not",
+      "source": "extra",
+      "status": "fixed",
+      "query": "AI OR NOT energy",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "extra-star-alone",
+      "source": "extra",
+      "status": "fixed",
+      "query": "*",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "extra-leading-star",
+      "source": "extra",
+      "status": "fixed",
+      "query": "*ai",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "extra-empty-phrase",
+      "source": "extra",
+      "status": "fixed",
+      "query": "\"\"",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "extra-nesting-over-8",
+      "source": "extra",
+      "status": "fixed",
+      "query": "((((((((((AI))))))))))",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "extra-arabic-term",
+      "source": "extra",
+      "status": "fixed",
+      "query": "دبي",
+      "expect": { "ids": [8], "warnings": [] }
+    },
+    {
+      "id": "extra-injection-canary",
+      "source": "extra",
+      "status": "fixed",
+      "query": "zzterm AND \"zzphrase qq\" AND zzpre*",
+      "expect": { "ids": [], "warnings": [] },
+      "sqlMustNotContain": ["zz"]
+    },
+    {
+      "id": "provisional-chinese-term",
+      "source": "extra",
+      "status": "provisional",
+      "query": "中国",
+      "expect": { "ids": [], "warnings": [] },
+      "note": "simple config does not segment Chinese; in article 9 the term only occurs inside longer runs."
+    },
+    {
+      "id": "provisional-chinese-prefix",
+      "source": "extra",
+      "status": "provisional",
+      "query": "中国*",
+      "expect": { "ids": [9], "warnings": [] },
+      "note": "Article 9's headline starts with it."
+    },
+    {
+      "id": "lexer-punctuation-term",
+      "source": "deviation-3",
+      "status": "fixed",
+      "query": "!!!",
+      "expect": { "error": "invalid_query" },
+      "note": "The lexer rejects a term with no letter or digit."
+    },
+    {
+      "id": "lexer-punctuation-prefix",
+      "source": "deviation-3",
+      "status": "fixed",
+      "query": "!!!*",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "lexer-punctuation-phrase",
+      "source": "deviation-3",
+      "status": "fixed",
+      "query": "\"!!!\"",
+      "expect": { "error": "invalid_query" }
+    },
+    {
+      "id": "lexer-punctuation-beside-term",
+      "source": "deviation-3",
+      "status": "fixed",
+      "query": "AI AND ---",
+      "expect": { "error": "invalid_query" }
+    }
+  ]
+}

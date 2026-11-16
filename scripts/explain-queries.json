@@ -1,0 +1,26 @@
+{
+  "about": [
+    "Single list of queries for the scale evidence. Read by scripts/explain.ts (npm run db:explain) and referenced by the pg-explain skill.",
+    "Each case is a request to an endpoint, with the same parameter names as the API (spec §4). The script builds the SQL with the routes' own query builders.",
+    "endpoint: 'list' = GET /api/articles; 'aggregate' = GET /api/articles/aggregate.",
+    "A value starting with '@' is resolved by the script from the synthetic data: '@sample' = a value that exists for that column; '@month-start' / '@month-end' = one calendar month inside the data's date range; '@page-50' = the cursor reached by paging 49 times with the case's other params.",
+    "index = the spec §1 index the case is meant to exercise; null where a full read is expected."
+  ],
+  "cases": [
+    { "id": "list-first-page", "endpoint": "list", "params": {}, "index": "articles (published_at desc, id desc)" },
+    { "id": "list-page-50", "endpoint": "list", "params": { "cursor": "@page-50" }, "index": "articles (published_at desc, id desc)" },
+    { "id": "list-by-source", "endpoint": "list", "params": { "source": "@sample" }, "index": "articles (source, published_at desc, id desc)" },
+    { "id": "list-by-language", "endpoint": "list", "params": { "language": "en" }, "index": "articles (language, published_at desc, id desc)" },
+    { "id": "list-by-date-range", "endpoint": "list", "params": { "from": "@month-start", "to": "@month-end" }, "index": "articles (published_at desc, id desc)" },
+    { "id": "list-by-topic", "endpoint": "list", "params": { "topic": "@sample" }, "index": "article_enrichments using gin (tags)" },
+    { "id": "list-by-sentiment", "endpoint": "list", "params": { "sentiment": "negative" }, "index": null },
+    { "id": "search-boolean", "endpoint": "list", "params": { "q": "renewable AND NOT (nuclear OR coal)" }, "index": "articles using gin (tsv)" },
+    { "id": "search-phrase", "endpoint": "list", "params": { "q": "\"oil prices\"" }, "index": "articles using gin (tsv)" },
+    { "id": "search-prefix", "endpoint": "list", "params": { "q": "renew*" }, "index": "articles using gin (tsv)" },
+    { "id": "search-with-filter", "endpoint": "list", "params": { "q": "renewable", "source": "@sample" }, "index": "articles using gin (tsv)" },
+    { "id": "aggregate-week", "endpoint": "aggregate", "params": { "bucket": "week" }, "index": null },
+    { "id": "aggregate-month", "endpoint": "aggregate", "params": { "bucket": "month" }, "index": null },
+    { "id": "aggregate-month-by-sentiment", "endpoint": "aggregate", "params": { "bucket": "month", "group_by": "sentiment" }, "index": null },
+    { "id": "aggregate-week-search", "endpoint": "aggregate", "params": { "bucket": "week", "q": "renewable" }, "index": "articles using gin (tsv)" }
+  ]
+}
