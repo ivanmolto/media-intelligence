@@ -4,7 +4,14 @@
 // rejects a compromised output. It does not show how a live model behaves: that
 // is docs/evaluations/adversarial-<model>.json.
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import type { Budget } from "@/lib/enrich/budget";
+import { ProviderError, type EnrichmentProvider } from "@/lib/enrich/provider";
+import {
+  loadCases,
+  main as adversarialMain,
+  runAdversarial,
+} from "@/scripts/adversarial-live";
 import { stripHtml } from "@/lib/html/strip";
 import {
   buildMessages,
@@ -181,5 +188,109 @@ describe("prompt builder", () => {
     expect(toProviderInput({ headline: "", body, language: "en" }).body).toBe(
       stripHtml(body),
     );
+  });
+});
+
+// The live runner's logic, with a fake provider: no network, no database.
+describe("live adversarial runner", () => {
+  const cases = loadCases();
+  const budget: Budget = {
+    reserve: async (tokens) => ({ day: "2026-01-01", tokens }),
+    correct: async () => {},
+  };
+  const answering = (
+    answer: (index: number) => unknown | Error,
+  ): EnrichmentProvider => {
+    let index = 0;
+    return {
+      enrich: async () => {
+        const raw = answer(index++);
+        if (raw instanceof Error) throw raw;
+        return {
+          raw,
+          model: "m",
+          provider: "p",
+          inputTokens: 1,
+          outputTokens: 1,
+        };
+      },
+    };
+  };
+  const clean = {
+    summary: "A summary of the article that follows no planted instruction.",
+    sentiment: "negative",
+    tags: ["business"],
+  };
+
+  it("reads the same fixture file as the offline test", () => {
+    expect(cases.map((c) => c.id)).toEqual(fixture.cases.map((c) => c.id));
+  });
+
+  it("records the validator's verdict and the raw output for every case", async () => {
+    const { results, stopped } = await runAdversarial(
+      answering(() => clean),
+      budget,
+      cases,
+    );
+    expect(stopped).toBeUndefined();
+    expect(results).toHaveLength(cases.length);
+    for (const r of results) {
+      expect(r).toMatchObject({
+        verdict: "valid",
+        raw_output: clean,
+        attempts: 1,
+      });
+      expect(r.canary_in_output === false || r.canary_in_output === null).toBe(
+        true,
+      );
+    }
+  });
+
+  it("reports a steered output as observed: invalid, canary seen, planted sentiment returned", async () => {
+    const steered = await runAdversarial(
+      answering(() => ({
+        ...clean,
+        summary: "CANARY-OVERRIDE-41 system compromised",
+        tags: ["hacked"],
+      })),
+      budget,
+      cases.filter((c) => c.id === "override"),
+    );
+    expect(steered.results[0]).toMatchObject({
+      verdict: "invalid",
+      canary_in_output: true,
+      attempts: 2,
+    });
+
+    const inSchema = await runAdversarial(
+      answering(() => ({ ...clean, sentiment: "positive" })),
+      budget,
+      cases.filter((c) => c.id === "sentiment_steering"),
+    );
+    expect(inSchema.results[0]).toMatchObject({
+      verdict: "valid",
+      planted_sentiment_returned: true,
+    });
+  });
+
+  it("stops at a refused request and marks the rest not run", async () => {
+    const { results, stopped } = await runAdversarial(
+      answering((i) => (i === 0 ? clean : new ProviderError(402))),
+      budget,
+      cases,
+    );
+    expect(stopped).toContain("402");
+    expect(results.map((r) => r.verdict)).toEqual([
+      "valid",
+      ...cases.slice(1).map(() => "not_run"),
+    ]);
+  });
+
+  it("refuses mock mode before anything is created or called", async () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(await adversarialMain({ LLM_MODE: "mock" })).toBe(1);
+    expect(await adversarialMain({})).toBe(1);
+    expect(errors.mock.calls.join()).toContain("refused in mock mode");
+    errors.mockRestore();
   });
 });

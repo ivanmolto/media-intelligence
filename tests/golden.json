@@ -1,0 +1,105 @@
+{
+  "note": "Hand-labelled by Ivan before any live model output existed, so the labels are not anchored on a model. `sentiment` is one of positive | negative | neutral | mixed: the overall tone toward the main subject, `mixed` only when both sides carry weight (intent). `acceptable_tags` lists every taxonomy id (lib/enrich/taxonomy.ts) that would be a correct tag for the article; a model output is tag-valid when all of its tags are in this list. Read by scripts/score.ts, which refuses to score while any label is empty.",
+  "labels": [
+    {
+      "external_id": 1,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 2,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 3,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 4,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 5,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 6,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 7,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 8,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 9,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 10,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 11,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 12,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 13,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 14,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 15,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 16,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 17,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 18,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 19,
+      "sentiment": null,
+      "acceptable_tags": []
+    },
+    {
+      "external_id": 20,
+      "sentiment": null,
+      "acceptable_tags": []
+    }
+  ]
+}
