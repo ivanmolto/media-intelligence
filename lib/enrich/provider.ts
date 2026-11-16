@@ -1,5 +1,6 @@
 // The provider contract (spec §3), and the one place the environment decides the
 // mode and the run key.
+import type { RunKey } from "../articles/filters";
 import { MockProvider } from "./mock";
 import { OpenAICompatibleProvider } from "./openai-compatible";
 import { PROMPT_VERSION, type ProviderInput } from "./prompt";
@@ -33,11 +34,7 @@ export class ProviderError extends Error {
   }
 }
 
-export type RunKey = {
-  requestedModel: string;
-  promptVersion: string;
-  taxonomyVersion: string;
-};
+export type { RunKey };
 
 type Env = Record<string, string | undefined>;
 
