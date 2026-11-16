@@ -400,6 +400,8 @@ describe("no query is a 500 (S3)", () => {
     "'; SELECT pg_sleep(1); --x",
     '"\'; SELECT pg_sleep(1); --x"',
     "%_x",
+    "a\u0000b",
+    '"oil \u0000 prices"',
   ])("%j", async (query) => {
     expect(await run(query)).not.toEqual({ error: "internal" });
   });

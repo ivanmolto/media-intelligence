@@ -168,6 +168,22 @@ describe("a leaf needs a letter or a digit (deviation 3)", () => {
   });
 });
 
+// Postgres cannot store U+0000 in text: sent as a parameter it is an encoding error,
+// which would be a 500 (S3).
+describe("a NUL character is rejected", () => {
+  it.each([
+    ["inside a term", "a\u0000b"],
+    ["as a term's first character", "\u0000x"],
+    ["inside a prefix", "a\u0000b*"],
+    ["inside a phrase", '"oil \u0000 prices"'],
+    ["between terms", "oil \u0000 gas"],
+  ])("%s", (_name, query) => {
+    const error = rejected(query);
+    expect(error.code).toBe("invalid_query");
+    expect(error.message).toMatch(/NUL/);
+  });
+});
+
 describe("limits (S4)", () => {
   const nested = (depth: number) =>
     "(".repeat(depth) + "AI" + ")".repeat(depth);
