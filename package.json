@@ -15,6 +15,8 @@
     "eval:adversarial": "tsx --env-file-if-exists=.env scripts/adversarial-live.ts",
     "init": "npm run migrate && npm run seed && npm run enrich",
     "search:debug": "tsx --env-file-if-exists=.env scripts/search-debug.ts",
+    "db:synthetic": "tsx --env-file-if-exists=.env scripts/synthetic.ts",
+    "db:explain": "tsx --env-file-if-exists=.env scripts/explain.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write \"{app,lib,components,scripts,tests}/**/*.{ts,tsx}\" \"*.{ts,mjs}\"",
