@@ -1,0 +1,635 @@
+EXPLAIN (ANALYZE, BUFFERS) on the synthetic database — written by `npm run db:explain`
+
+generated:    2026-11-16T04:45:21.882Z
+postgres:     PostgreSQL 16.13 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+database:     media_synthetic
+articles:     200000
+run key:      mock / v1 / v1
+commit:       0c0121e1834027478f6847b55fc3f4f899875d5e
+working tree: clean
+queries:      scripts/explain-queries.json
+
+Each case is run twice; the second run is recorded, so buffers are warm.
+Synthetic text: term frequencies are set in scripts/synthetic.ts (RATES), not
+taken from a corpus. Timings describe this dataset on this machine.
+
+==============================================================================
+case:            list-first-page
+endpoint:        list
+params:          {}
+intended index:  articles (published_at desc, id desc)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   200000 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE TRUE
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $4
+parameters:      ["mock","v1","v1",21]
+
+Limit  (cost=0.84..31.73 rows=21 width=238) (actual time=0.027..0.095 rows=21 loops=1)
+  Buffers: shared hit=108
+  ->  Nested Loop Left Join  (cost=0.84..294254.70 rows=200058 width=238) (actual time=0.026..0.093 rows=21 loops=1)
+        Buffers: shared hit=108
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..177988.76 rows=200058 width=102) (actual time=0.009..0.019 rows=21 loops=1)
+              Buffers: shared hit=24
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..0.58 rows=1 width=112) (actual time=0.002..0.002 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=32
+Planning Time: 0.264 ms
+Execution Time: 0.125 ms
+
+==============================================================================
+case:            list-page-50
+endpoint:        list
+params:          {"cursor":"eyJ0cyI6IjIwMjYtMDYtMjdUMTA6MzY6MjcuNzQxMDAwWiIsImlkIjoiMTYxODMzIiwiZmlsdGVyX2hhc2giOiJmMjE1YzU1MmMxNTgyNGJlIn0"}
+intended index:  articles (published_at desc, id desc)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   200000 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE TRUE AND (a.published_at, a.id) < ($4::timestamptz, $5::bigint)
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $6
+parameters:      ["mock","v1","v1","2026-06-27T10:36:27.741000Z","161833",21]
+
+Limit  (cost=0.84..31.89 rows=21 width=238) (actual time=0.027..0.100 rows=21 loops=1)
+  Buffers: shared hit=109
+  ->  Nested Loop Left Join  (cost=0.84..294263.14 rows=199049 width=238) (actual time=0.027..0.099 rows=21 loops=1)
+        Buffers: shared hit=109
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..178451.25 rows=199049 width=102) (actual time=0.015..0.028 rows=21 loops=1)
+              Index Cond: (ROW(published_at, id) < ROW('2026-06-27 10:36:27.741+00'::timestamp with time zone, '161833'::bigint))
+              Buffers: shared hit=25
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..0.58 rows=1 width=112) (actual time=0.002..0.002 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=36
+Planning Time: 0.202 ms
+Execution Time: 0.126 ms
+
+==============================================================================
+case:            list-by-source
+endpoint:        list
+params:          {"source":"Synthetic Wire 01"}
+intended index:  articles (source, published_at desc, id desc)
+indexes in plan: articles_source_published_idx, article_enrichments_pkey
+matching rows:   57776 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE a.source = $4
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $5
+parameters:      ["mock","v1","v1","Synthetic Wire 01",21]
+
+Limit  (cost=0.84..70.66 rows=21 width=238) (actual time=0.023..0.071 rows=21 loops=1)
+  Buffers: shared hit=108
+  ->  Nested Loop Left Join  (cost=0.84..192157.17 rows=57797 width=238) (actual time=0.022..0.069 rows=21 loops=1)
+        Buffers: shared hit=108
+        ->  Index Scan using articles_source_published_idx on articles a  (cost=0.42..139908.52 rows=57797 width=102) (actual time=0.011..0.016 rows=21 loops=1)
+              Index Cond: (source = 'Synthetic Wire 01'::text)
+              Buffers: shared hit=24
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..0.90 rows=1 width=112) (actual time=0.001..0.001 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=32
+Planning Time: 0.208 ms
+Execution Time: 0.088 ms
+
+==============================================================================
+case:            list-by-language
+endpoint:        list
+params:          {"language":"en"}
+intended index:  articles (language, published_at desc, id desc)
+indexes in plan: articles_language_published_idx, article_enrichments_pkey
+matching rows:   160083 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE a.language = $4
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $5
+parameters:      ["mock","v1","v1","en",21]
+
+Limit  (cost=0.84..32.43 rows=21 width=238) (actual time=0.029..0.102 rows=21 loops=1)
+  Buffers: shared hit=108
+  ->  Nested Loop Left Join  (cost=0.84..241148.95 rows=160326 width=238) (actual time=0.028..0.101 rows=21 loops=1)
+        Buffers: shared hit=108
+        ->  Index Scan using articles_language_published_idx on articles a  (cost=0.42..142762.44 rows=160326 width=102) (actual time=0.013..0.026 rows=21 loops=1)
+              Index Cond: (language = 'en'::text)
+              Buffers: shared hit=24
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..0.61 rows=1 width=112) (actual time=0.002..0.002 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=32
+Planning Time: 0.222 ms
+Execution Time: 0.125 ms
+
+==============================================================================
+case:            list-by-date-range
+endpoint:        list
+params:          {"from":"2024-08-01","to":"2024-08-31"}
+intended index:  articles (published_at desc, id desc)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   8472 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE a.published_at >= $4 AND a.published_at < $5
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $6
+parameters:      ["mock","v1","v1","2024-08-01T00:00:00.000Z","2024-09-01T00:00:00.000Z",21]
+
+Limit  (cost=0.84..146.18 rows=21 width=238) (actual time=0.027..0.110 rows=21 loops=1)
+  Buffers: shared hit=108
+  ->  Nested Loop Left Join  (cost=0.84..57003.22 rows=8236 width=238) (actual time=0.027..0.108 rows=21 loops=1)
+        Buffers: shared hit=108
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..30389.02 rows=8236 width=102) (actual time=0.011..0.024 rows=21 loops=1)
+              Index Cond: ((published_at >= '2024-08-01 00:00:00+00'::timestamp with time zone) AND (published_at < '2024-09-01 00:00:00+00'::timestamp with time zone))
+              Buffers: shared hit=24
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..3.23 rows=1 width=112) (actual time=0.003..0.003 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=32
+Planning Time: 0.273 ms
+Execution Time: 0.134 ms
+
+==============================================================================
+case:            list-by-topic
+endpoint:        list
+params:          {"topic":"ai"}
+intended index:  article_enrichments using gin (tags)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   28368 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE e.tags @> ARRAY[$4]::text[]
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $5
+parameters:      ["mock","v1","v1","ai",21]
+
+Limit  (cost=0.84..218.62 rows=21 width=238) (actual time=0.034..0.385 rows=21 loops=1)
+  Buffers: shared hit=763
+  ->  Nested Loop  (cost=0.84..293896.26 rows=28340 width=238) (actual time=0.034..0.383 rows=21 loops=1)
+        Buffers: shared hit=763
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..177988.76 rows=200058 width=102) (actual time=0.008..0.063 rows=152 loops=1)
+              Buffers: shared hit=155
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..0.58 rows=1 width=112) (actual time=0.002..0.002 rows=0 loops=152)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Filter: (tags @> '{ai}'::text[])
+              Rows Removed by Filter: 1
+              Buffers: shared hit=608
+Planning:
+  Buffers: shared hit=33
+Planning Time: 0.245 ms
+Execution Time: 0.411 ms
+
+==============================================================================
+case:            list-by-sentiment
+endpoint:        list
+params:          {"sentiment":"negative"}
+intended index:  none (a full read is expected)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   49863 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE e.sentiment = $4
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $5
+parameters:      ["mock","v1","v1","negative",21]
+
+Limit  (cost=0.84..125.12 rows=21 width=238) (actual time=0.019..0.213 rows=21 loops=1)
+  Buffers: shared hit=558
+  ->  Nested Loop  (cost=0.84..294002.96 rows=49680 width=238) (actual time=0.018..0.211 rows=21 loops=1)
+        Buffers: shared hit=558
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..177988.76 rows=200058 width=102) (actual time=0.007..0.033 rows=111 loops=1)
+              Buffers: shared hit=114
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..0.58 rows=1 width=112) (actual time=0.001..0.001 rows=0 loops=111)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Filter: (sentiment = 'negative'::text)
+              Rows Removed by Filter: 1
+              Buffers: shared hit=444
+Planning:
+  Buffers: shared hit=32
+Planning Time: 0.214 ms
+Execution Time: 0.233 ms
+
+==============================================================================
+case:            search-boolean
+endpoint:        list
+params:          {"q":"renewable AND NOT (nuclear OR coal)"}
+intended index:  articles using gin (tsv)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   3777 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE ((a.language = 'en' AND ((a.tsv @@ plainto_tsquery('english', $4) AND NOT (a.tsv @@ plainto_tsquery('english', $5) OR a.tsv @@ plainto_tsquery('english', $6))))) OR (a.language <> 'en' AND ((a.tsv @@ plainto_tsquery('simple', $7) AND NOT (a.tsv @@ plainto_tsquery('simple', $8) OR a.tsv @@ plainto_tsquery('simple', $9))))))
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $10
+parameters:      ["mock","v1","v1","renewable","nuclear","coal","renewable","nuclear","coal",21]
+
+Limit  (cost=0.84..1655.42 rows=21 width=238) (actual time=1.307..22.459 rows=21 loops=1)
+  Buffers: shared hit=11484
+  ->  Nested Loop Left Join  (cost=0.84..194138.43 rows=2464 width=238) (actual time=1.307..22.457 rows=21 loops=1)
+        Buffers: shared hit=11484
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..180989.63 rows=2464 width=102) (actual time=1.298..22.378 rows=21 loops=1)
+              Filter: ((NOT (tsv @@ '''nuclear'''::tsquery)) AND (NOT (tsv @@ '''coal'''::tsquery)) AND (((language = 'en'::text) AND (tsv @@ '''renew'''::tsquery)) OR ((language <> 'en'::text) AND (tsv @@ '''renewable'''::tsquery))))
+              Rows Removed by Filter: 1138
+              Buffers: shared hit=11400
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..5.33 rows=1 width=112) (actual time=0.002..0.002 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=34
+Planning Time: 0.301 ms
+Execution Time: 22.481 ms
+
+==============================================================================
+case:            search-phrase
+endpoint:        list
+params:          {"q":"\"oil prices\""}
+intended index:  articles using gin (tsv)
+indexes in plan: articles_tsv_idx, article_enrichments_pkey
+matching rows:   2033 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE ((a.language = 'en' AND (a.tsv @@ phraseto_tsquery('english', $4))) OR (a.language <> 'en' AND (a.tsv @@ phraseto_tsquery('simple', $5))))
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $6
+parameters:      ["mock","v1","v1","oil prices","oil prices",21]
+
+Limit  (cost=3068.28..3068.34 rows=21 width=238) (actual time=42.602..42.606 rows=21 loops=1)
+  Buffers: shared hit=24118
+  ->  Sort  (cost=3068.28..3068.79 rows=201 width=238) (actual time=42.602..42.604 rows=21 loops=1)
+        Sort Key: a.published_at DESC, a.id DESC
+        Sort Method: top-N heapsort  Memory: 40kB
+        Buffers: shared hit=24118
+        ->  Nested Loop Left Join  (cost=358.39..3062.86 rows=201 width=238) (actual time=1.105..42.096 rows=2033 loops=1)
+              Buffers: shared hit=24118
+              ->  Bitmap Heap Scan on articles a  (cost=357.97..1448.41 rows=201 width=102) (actual time=1.089..36.313 rows=2033 loops=1)
+                    Recheck Cond: ((tsv @@ '''oil'' <-> ''price'''::tsquery) OR (tsv @@ '''oil'' <-> ''prices'''::tsquery))
+                    Rows Removed by Index Recheck: 175
+                    Filter: (((language = 'en'::text) AND (tsv @@ '''oil'' <-> ''price'''::tsquery)) OR ((language <> 'en'::text) AND (tsv @@ '''oil'' <-> ''prices'''::tsquery)))
+                    Heap Blocks: exact=2159
+                    Buffers: shared hit=15986
+                    ->  BitmapOr  (cost=357.97..357.97 rows=289 width=0) (actual time=0.919..0.920 rows=0 loops=1)
+                          Buffers: shared hit=27
+                          ->  Bitmap Index Scan on articles_tsv_idx  (cost=0.00..179.40 rows=239 width=0) (actual time=0.649..0.649 rows=1758 loops=1)
+                                Index Cond: (tsv @@ '''oil'' <-> ''price'''::tsquery)
+                                Buffers: shared hit=15
+                          ->  Bitmap Index Scan on articles_tsv_idx  (cost=0.00..178.46 rows=50 width=0) (actual time=0.270..0.270 rows=450 loops=1)
+                                Index Cond: (tsv @@ '''oil'' <-> ''prices'''::tsquery)
+                                Buffers: shared hit=12
+              ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..8.03 rows=1 width=112) (actual time=0.002..0.002 rows=1 loops=2033)
+                    Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+                    Buffers: shared hit=8132
+Planning:
+  Buffers: shared hit=34
+Planning Time: 0.268 ms
+Execution Time: 42.701 ms
+
+==============================================================================
+case:            search-prefix
+endpoint:        list
+params:          {"q":"renew*"}
+intended index:  articles using gin (tsv)
+indexes in plan: articles_published_idx, article_enrichments_pkey
+matching rows:   3913 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE ((a.language = 'en' AND (a.tsv @@ (plainto_tsquery('english', $4)::text || ':*')::tsquery)) OR (a.language <> 'en' AND (a.tsv @@ (plainto_tsquery('simple', $5)::text || ':*')::tsquery)))
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $6
+parameters:      ["mock","v1","v1","renew","renew",21]
+
+Limit  (cost=0.84..1605.76 rows=21 width=238) (actual time=0.621..9.704 rows=21 loops=1)
+  Buffers: shared hit=4498
+  ->  Nested Loop Left Join  (cost=0.84..192820.55 rows=2523 width=238) (actual time=0.620..9.700 rows=21 loops=1)
+        Buffers: shared hit=4498
+        ->  Index Scan using articles_published_idx on articles a  (cost=0.42..179489.20 rows=2523 width=102) (actual time=0.606..9.578 rows=21 loops=1)
+              Filter: ((tsv @@ '''renew'':*'::tsquery) AND ((language = 'en'::text) OR (language <> 'en'::text)))
+              Rows Removed by Filter: 1081
+              Buffers: shared hit=4414
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..5.28 rows=1 width=112) (actual time=0.003..0.003 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=33
+Planning Time: 0.336 ms
+Execution Time: 9.732 ms
+
+==============================================================================
+case:            search-with-filter
+endpoint:        list
+params:          {"q":"renewable","source":"Synthetic Wire 01"}
+intended index:  articles using gin (tsv)
+indexes in plan: articles_source_published_idx, article_enrichments_pkey
+matching rows:   1171 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT a.id AS row_id, a.external_id, a.headline, a.source, a.language, a.published_at,
+    to_char(a.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_ts,
+    e.status, e.summary, e.sentiment, e.tags
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  WHERE a.source = $4 AND ((a.language = 'en' AND (a.tsv @@ plainto_tsquery('english', $5))) OR (a.language <> 'en' AND (a.tsv @@ plainto_tsquery('simple', $6))))
+  ORDER BY a.published_at DESC, a.id DESC
+  LIMIT $7
+parameters:      ["mock","v1","v1","Synthetic Wire 01","renewable","renewable",21]
+
+Limit  (cost=0.84..4175.38 rows=21 width=238) (actual time=0.863..10.675 rows=21 loops=1)
+  Buffers: shared hit=4999
+  ->  Nested Loop Left Join  (cost=0.84..145712.34 rows=733 width=238) (actual time=0.862..10.672 rows=21 loops=1)
+        Buffers: shared hit=4999
+        ->  Index Scan using articles_source_published_idx on articles a  (cost=0.42..140486.49 rows=733 width=102) (actual time=0.849..10.552 rows=21 loops=1)
+              Index Cond: (source = 'Synthetic Wire 01'::text)
+              Filter: (((language = 'en'::text) AND (tsv @@ '''renew'''::tsquery)) OR ((language <> 'en'::text) AND (tsv @@ '''renewable'''::tsquery)))
+              Rows Removed by Filter: 1176
+              Buffers: shared hit=4915
+        ->  Index Scan using article_enrichments_pkey on article_enrichments e  (cost=0.42..7.12 rows=1 width=112) (actual time=0.004..0.004 rows=1 loops=21)
+              Index Cond: ((article_id = a.id) AND (requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+              Buffers: shared hit=84
+Planning:
+  Buffers: shared hit=34
+Planning Time: 0.324 ms
+Execution Time: 10.860 ms
+
+==============================================================================
+case:            aggregate-week
+endpoint:        aggregate
+params:          {"bucket":"week"}
+intended index:  none (a full read is expected)
+indexes in plan: articles_published_idx
+matching rows:   200000 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT to_char(date_trunc('week', a.published_at AT TIME ZONE 'UTC'), 'YYYY-MM-DD') AS bucket,
+  NULL::text AS "group",
+    count(*)::int AS count
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  
+  WHERE TRUE
+  GROUP BY 1, 2
+  ORDER BY 1, 2
+parameters:      ["mock","v1","v1"]
+
+GroupAggregate  (cost=31116.89..36610.27 rows=199647 width=68) (actual time=133.898..163.362 rows=105 loops=1)
+  Group Key: (to_char(date_trunc('week'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text))
+  Buffers: shared hit=72762, temp read=442 written=444
+  ->  Sort  (cost=31116.89..31617.04 rows=200058 width=32) (actual time=133.495..148.413 rows=200000 loops=1)
+        Sort Key: (to_char(date_trunc('week'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text))
+        Sort Method: external merge  Disk: 3536kB
+        Buffers: shared hit=72762, temp read=442 written=444
+        ->  Index Only Scan using articles_published_idx on articles a  (cost=0.42..8713.73 rows=200058 width=32) (actual time=0.022..94.227 rows=200000 loops=1)
+              Heap Fetches: 0
+              Buffers: shared hit=72762
+Planning Time: 0.087 ms
+Execution Time: 163.878 ms
+
+==============================================================================
+case:            aggregate-month
+endpoint:        aggregate
+params:          {"bucket":"month"}
+intended index:  none (a full read is expected)
+indexes in plan: articles_published_idx
+matching rows:   200000 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT to_char(date_trunc('month', a.published_at AT TIME ZONE 'UTC'), 'YYYY-MM-DD') AS bucket,
+  NULL::text AS "group",
+    count(*)::int AS count
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  
+  WHERE TRUE
+  GROUP BY 1, 2
+  ORDER BY 1, 2
+parameters:      ["mock","v1","v1"]
+
+GroupAggregate  (cost=31116.89..36610.27 rows=199647 width=68) (actual time=117.012..143.918 rows=24 loops=1)
+  Group Key: (to_char(date_trunc('month'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text))
+  Buffers: shared hit=72762, temp read=442 written=444
+  ->  Sort  (cost=31116.89..31617.04 rows=200058 width=32) (actual time=115.297..130.156 rows=200000 loops=1)
+        Sort Key: (to_char(date_trunc('month'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text))
+        Sort Method: external merge  Disk: 3536kB
+        Buffers: shared hit=72762, temp read=442 written=444
+        ->  Index Only Scan using articles_published_idx on articles a  (cost=0.42..8713.73 rows=200058 width=32) (actual time=0.017..85.752 rows=200000 loops=1)
+              Heap Fetches: 0
+              Buffers: shared hit=72762
+Planning Time: 0.073 ms
+Execution Time: 144.359 ms
+
+==============================================================================
+case:            aggregate-month-by-sentiment
+endpoint:        aggregate
+params:          {"bucket":"month","group_by":"sentiment"}
+intended index:  none (a full read is expected)
+indexes in plan: articles_published_idx
+matching rows:   200000 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT to_char(date_trunc('month', a.published_at AT TIME ZONE 'UTC'), 'YYYY-MM-DD') AS bucket,
+  e.sentiment AS "group",
+    count(*)::int AS count
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  
+  WHERE TRUE
+  GROUP BY 1, 2
+  ORDER BY 1, 2
+parameters:      ["mock","v1","v1"]
+
+Finalize GroupAggregate  (cost=25053.58..51840.62 rows=200058 width=44) (actual time=119.993..131.544 rows=96 loops=1)
+  Group Key: (to_char(date_trunc('month'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text)), e.sentiment
+  Buffers: shared hit=74729 read=3714, temp read=719 written=722
+  ->  Gather Merge  (cost=25053.58..46589.09 rows=166716 width=48) (actual time=119.870..131.502 rows=288 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=74729 read=3714, temp read=719 written=722
+        ->  Partial GroupAggregate  (cost=24053.56..26345.91 rows=83358 width=48) (actual time=106.811..117.036 rows=96 loops=3)
+              Group Key: (to_char(date_trunc('month'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text)), e.sentiment
+              Buffers: shared hit=74729 read=3714, temp read=719 written=722
+              ->  Sort  (cost=24053.56..24261.96 rows=83358 width=40) (actual time=106.757..110.708 rows=66667 loops=3)
+                    Sort Key: (to_char(date_trunc('month'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text)), e.sentiment
+                    Sort Method: external merge  Disk: 1920kB
+                    Buffers: shared hit=74729 read=3714, temp read=719 written=722
+                    Worker 0:  Sort Method: external merge  Disk: 1920kB
+                    Worker 1:  Sort Method: external merge  Disk: 1912kB
+                    ->  Parallel Hash Left Join  (cost=8068.42..14958.28 rows=83358 width=40) (actual time=28.726..83.381 rows=66667 loops=3)
+                          Hash Cond: (a.id = e.article_id)
+                          Buffers: shared hit=74655 read=3714
+                          ->  Parallel Index Only Scan using articles_published_idx on articles a  (cost=0.42..6046.28 rows=83358 width=16) (actual time=0.088..11.705 rows=66667 loops=3)
+                                Heap Fetches: 0
+                                Buffers: shared hit=72771
+                          ->  Parallel Hash  (cost=7026.33..7026.33 rows=83333 width=16) (actual time=28.196..28.197 rows=66667 loops=3)
+                                Buckets: 262144  Batches: 1  Memory Usage: 12256kB
+                                Buffers: shared hit=1854 read=3714
+                                ->  Parallel Seq Scan on article_enrichments e  (cost=0.00..7026.33 rows=83333 width=16) (actual time=0.019..14.613 rows=66667 loops=3)
+                                      Filter: ((requested_model = 'mock'::text) AND (prompt_version = 'v1'::text) AND (taxonomy_version = 'v1'::text))
+                                      Buffers: shared hit=1854 read=3714
+Planning:
+  Buffers: shared hit=16
+Planning Time: 0.212 ms
+Execution Time: 131.858 ms
+
+==============================================================================
+case:            aggregate-week-search
+endpoint:        aggregate
+params:          {"bucket":"week","q":"renewable"}
+intended index:  articles using gin (tsv)
+indexes in plan: articles_tsv_idx
+matching rows:   3913 of 200000 (filters only; cursor and limit aside)
+
+statement:
+  SELECT to_char(date_trunc('week', a.published_at AT TIME ZONE 'UTC'), 'YYYY-MM-DD') AS bucket,
+  NULL::text AS "group",
+    count(*)::int AS count
+  FROM articles a
+  LEFT JOIN article_enrichments e
+    ON e.article_id = a.id
+    AND e.requested_model = $1
+    AND e.prompt_version = $2
+    AND e.taxonomy_version = $3
+  
+  WHERE ((a.language = 'en' AND (a.tsv @@ plainto_tsquery('english', $4))) OR (a.language <> 'en' AND (a.tsv @@ plainto_tsquery('simple', $5))))
+  GROUP BY 1, 2
+  ORDER BY 1, 2
+parameters:      ["mock","v1","v1","renewable","renewable"]
+
+GroupAggregate  (cost=11504.90..11574.69 rows=2538 width=68) (actual time=42.038..42.595 rows=105 loops=1)
+  Group Key: (to_char(date_trunc('week'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text))
+  Buffers: shared hit=15973
+  ->  Sort  (cost=11504.90..11511.24 rows=2538 width=32) (actual time=42.025..42.266 rows=3913 loops=1)
+        Sort Key: (to_char(date_trunc('week'::text, (a.published_at AT TIME ZONE 'UTC'::text)), 'YYYY-MM-DD'::text))
+        Sort Method: quicksort  Memory: 188kB
+        Buffers: shared hit=15973
+        ->  Bitmap Heap Scan on articles a  (cost=201.99..11361.38 rows=2538 width=32) (actual time=0.905..40.534 rows=3913 loops=1)
+              Recheck Cond: ((tsv @@ '''renew'''::tsquery) OR (tsv @@ '''renewable'''::tsquery))
+              Filter: (((language = 'en'::text) AND (tsv @@ '''renew'''::tsquery)) OR ((language <> 'en'::text) AND (tsv @@ '''renewable'''::tsquery)))
+              Heap Blocks: exact=3782
+              Buffers: shared hit=15973
+              ->  BitmapOr  (cost=201.99..201.99 rows=3678 width=0) (actual time=0.557..0.558 rows=0 loops=1)
+                    Buffers: shared hit=7
+                    ->  Bitmap Index Scan on articles_tsv_idx  (cost=0.00..106.17 rows=3001 width=0) (actual time=0.360..0.360 rows=3124 loops=1)
+                          Index Cond: (tsv @@ '''renew'''::tsquery)
+                          Buffers: shared hit=4
+                    ->  Bitmap Index Scan on articles_tsv_idx  (cost=0.00..94.55 rows=677 width=0) (actual time=0.196..0.196 rows=789 loops=1)
+                          Index Cond: (tsv @@ '''renewable'''::tsquery)
+                          Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=2
+Planning Time: 0.124 ms
+Execution Time: 42.707 ms
+
+==============================================================================
+cases in file: 15; cases run: 15
