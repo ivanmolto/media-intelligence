@@ -147,7 +147,7 @@
     {
       "id": "provisional-chinese-term",
       "source": "extra",
-      "status": "provisional",
+      "status": "fixed",
       "query": "中国",
       "expect": { "ids": [], "warnings": [] },
       "note": "simple config does not segment Chinese; in article 9 the term only occurs inside longer runs."
@@ -155,7 +155,7 @@
     {
       "id": "provisional-chinese-prefix",
       "source": "extra",
-      "status": "provisional",
+      "status": "fixed",
       "query": "中国*",
       "expect": { "ids": [9], "warnings": [] },
       "note": "Article 9's headline starts with it."
